@@ -2,21 +2,14 @@ const ulGuestList = document.querySelector('.js-guest-list')
 const inputAddGuest = document.querySelector('.js-input')
 const btnSubmit = document.querySelector('.js-btn-submit')
 
-{/* <li class="guest-list__item js-guest">
-<span class="js-guest-name">Aiz Lima</span>
-<a href="#" class="btn-delete btn js-btn-delete">Delete</a>
-</li> */}
-
-let guests = [
-    { id: 1, name: "Aiz Lima" },
-    { id: 2, name: "Lucas Araujo" },
-    { id: 3, name: "Rany Marques" },
-]
+let guests = JSON.parse(localStorage.getItem("guests")) || []
 
 function createItemsGuestList(guestName) {
     const li = document.createElement("li")
     const span = document.createElement("span")
     const a = document.createElement("a")
+
+    a.setAttribute("href", "#")
 
     li.classList.add("guest-list__item")
     a.classList.add("btn-delete", "btn", "js-btn-delete")
@@ -27,7 +20,17 @@ function createItemsGuestList(guestName) {
     li.appendChild(span)
     li.appendChild(a)
     ulGuestList.appendChild(li)
+
+    a.onclick = () => {
+        const htmlGuest = a.previousElementSibling.innerText
+        guests = guests.filter((guest) => {
+            return guest.name != htmlGuest
+        })
+        saveGuests()
+        a.parentElement.remove()
+    }
 }
+
 
 function renderGuestList(guests) {
     guests.forEach(guest => {
@@ -49,14 +52,24 @@ const addGuest = (e) => {
     e.preventDefault()
     const inputValue = inputAddGuest.value
     if (!!inputValue) {
-        const newId = guests[guests.length - 1].id + 1
+        console.log(guests.length)
+        let newId = 0
+        if (guests.length == 0) {
+            newId = 1
+        } else {
+            newId = guests[guests.length - 1].id + 1
+        }
         const newGuest = { id: newId, name: inputValue }
         guests.push(newGuest)
         cleanGuestsRender()
+        saveGuests()
         renderGuestList(guests)
     }
 }
 
-btnSubmit.onclick = addGuest
+function saveGuests() {
+    localStorage.setItem("guests", JSON.stringify(guests))
+}
 
+btnSubmit.onclick = addGuest
 renderGuestList(guests)
