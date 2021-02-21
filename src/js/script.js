@@ -64,6 +64,7 @@ const addGuest = (e) => {
         cleanGuestsRender()
         saveGuests()
         renderGuestList(guests)
+        inputAddGuest.value = ""
     }
 }
 
